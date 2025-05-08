@@ -5,51 +5,44 @@ from datetime import datetime
 import time
 import os
 import subprocess
-import threading
 import re
+
 
 def get_image_path(base_dir="images"):
     today = datetime.today()
     year = str(today.year)
     month = f'{today.month:02d}'
     day = f'{today.day:02d}'
-    image_path = os.path.join(os.getcwd(),base_dir, year, month, day)º
+    image_path = os.path.join(os.getcwd(),base_dir, year, month, day)
     os.makedirs(image_path, exist_ok=True)
     return image_path
 
-def ejecutar_en_horario(func, start_hour, end_hour, start_minute=0, end_minute=0, interval=5):
+def ejecutar_en_horario(func, start_hour, end_hour, start_minute=0, end_minute=0, interval=60):
     """
-    Ejecuta una función en un hilo dentro del horario especificado.
+    Ejecuta una funcion dentro del horario especificado cada cierto intervalo de tiempo.
+    
+    Parametros:
+    - func: Funcion a ejecutar.
+    - start_hour, start_minute: Hora y minuto de inicio (ejemplo: 8, 30 para 08:30).
+    - end_hour, end_minute: Hora y minuto de fin (ejemplo: 20, 15 para 20:15).
+    - interval: Intervalo de ejecucion en segundos.
     """
-    global stop_detection
-
-    start_time = datetime.strptime(f"{start_hour}:{start_minute}", "%H:%M").time()
-    end_time = datetime.strptime(f"{end_hour}:{end_minute}", "%H:%M").time()
-
-    thread = None  # Para manejar el hilo de ejecución
-    running = False  # Bandera para saber si la cámara está encendida
-
     while True:
         now = datetime.now().time()
-        print('-----------------', now, '-----------------')
-        if now.minute % 2 == 0:
-            if not running:
-                print("Iniciando proceso de detección...")
-                stop_detection = False
-                thread = threading.Thread(target=func, daemon=True)
-                thread.start()
-                running = True
+        start_time = datetime.strptime(f"{start_hour}:{start_minute}", "%H:%M").time()
+        end_time = datetime.strptime(f"{end_hour}:{end_minute}", "%H:%M").time()
+
+        if start_time <= now < end_time:
+            func()
         else:
-            if running:
-                print("Fuera del horario. Cerrando proceso de detección...")
-                stop_detection = True
-                thread.join()
-                running = False
-        
-        time.sleep(interval)  # Comprobación más frecuente
+            print(f"Fuera del horario ({start_hour}:{start_minute} - {end_hour}:{end_minute}), esperando...")
+
+        time.sleep(interval)
+
 
 def main():
     image_path = get_image_path('app/static/images')
+
 
     exp_t = 3
     subprocess.run("v4l2-ctl --set-ctrl=auto_exposure=1", shell=True)
@@ -115,20 +108,24 @@ def main():
 
     rect_container_limits = [250, 200, 450, 400] # x1, y1, x2, y2
 
+
     frame_width = 700
     frame_height = 700
-    global stop_detection
-    while not stop_detection:  
+    while True:
         ret, frame = cap.read()  # Leer un frame
         frame = frame[200:900, 900:1600]
         if not ret:  # Si no se pudo leer (final del video), salir del bucle
             break        
             
+        start = time.time()
         if mask is not None:
             frame_with_mask = cv2.bitwise_and(frame, mask)
             results = coco_model(frame_with_mask)[0]
         else:
             results = coco_model(frame)[0]
+        
+        end = time.time()
+        print(f"Inferencia: {end - start:.2f} segundos")
         
         now = datetime.now()
         
@@ -179,9 +176,13 @@ def main():
             break
 
     # Liberar la cámara y cerrar todas las ventanas
-    print("Cerrando cámara...")
     cap.release()
     cv2.destroyAllWindows()
-    print("Camaras cerradas...")
 
-ejecutar_en_horario(main, start_hour=8, end_hour=19, start_minute=0, end_minute=0, interval=10)
+
+# ejecutar_en_horario(main, start_hour=8, end_hour=20, interval=60)
+
+ejecutar_en_horario(main, start_hour=8, end_hour=20, start_minute=0, end_minute=30, interval=60)
+
+
+

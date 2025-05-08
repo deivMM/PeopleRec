@@ -1,5 +1,4 @@
 import cv2
-
 import subprocess
 
 resultado = subprocess.run('v4l2-ctl --list-ctrls', shell=True, capture_output=True, text=True)

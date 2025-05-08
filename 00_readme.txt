@@ -16,6 +16,18 @@ v4l2-ctl --set-ctrl=exposure_time_absolute=157
 v4l2-ctl --set-ctrl=auto_exposure=3
 v4l2-ctl --set-ctrl=exposure_dynamic_framerate=0
 
+
+### Requisitos
+- Python 3.11.2
+
+- Actualizar dependencias con:
+pip freeze > requirements.txt
+
+- Instalar dependencias con:
+  pip install -r requirements.txt
+
+
+
 tmux ls
 tmux kill-session -t 0
 

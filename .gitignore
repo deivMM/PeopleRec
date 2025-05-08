@@ -1,3 +1,5 @@
 app/static/images/
-models/
-venv/
+people_recog/models/
+people_recog/venv_pr
+app/venv_app
+
