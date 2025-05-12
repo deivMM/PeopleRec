@@ -7,7 +7,8 @@ import re
 import time
 
 picam2 = Picamera2()
-picam2.preview_configuration.main.size = (1920, 1080)
+# picam2.preview_configuration.main.size = (1920, 1080)
+picam2.preview_configuration.main.size = (640, 480)
 picam2.preview_configuration.main.format = "RGB888"
 picam2.configure("preview")
 picam2.start()
@@ -19,9 +20,7 @@ image_path  = 'images_people_temp'
 coco_model = YOLO("models/yolov8n.pt")
 COCO_LABELS = coco_model.names
 
-rect_container_limits = (.5, 0.3, .7, .6) # (x1, y1, x2, y2)
-cropped_frame_limits = (.4, 0.15, .75, .7) # (x1, y1, x2, y2)
-
+rect_container_limits = (.5, 0.4, .7, .7) # (x1, y1, x2, y2)
 
 rect_container_limits = (int(rect_container_limits[0] * frame_width), int(rect_container_limits[1] * frame_height),
                         int(rect_container_limits[2] * frame_width), int(rect_container_limits[3] * frame_height))
@@ -62,21 +61,15 @@ while True:
                     tiempo_actual = time.time()
                     if tiempo_actual - ultimo_tiempo_deteccion > tiempo_espera:
                         formatted_time = now.strftime("%Y_%m_%d__%H_%M_%S")
-                        
-                        cropped_frame = frame[int(cropped_frame_limits[1] * frame_height):int(cropped_frame_limits[3] * frame_height),
-                                            int(cropped_frame_limits[0] * frame_width):int(cropped_frame_limits[2] * frame_width)]
-                        
+                                                
                         image_n = f'img_{formatted_time}'
                         print('imagen guardada')
-                        cv2.imwrite(f'{image_path}/{image_n}.jpg', cropped_frame)
+                        cv2.imwrite(f'{image_path}/{image_n}.jpg', frame)
                         ultimo_tiempo_deteccion = tiempo_actual
         
     cv2.rectangle(frame, (rect_container_limits[0], rect_container_limits[1]),
                 (rect_container_limits[2], rect_container_limits[3]),(255, 0, 0),2)
     
-    cv2.rectangle(frame, (int(cropped_frame_limits[0] * frame_width), int(cropped_frame_limits[1] * frame_height)),
-                (int(cropped_frame_limits[2] * frame_width), int(cropped_frame_limits[3] * frame_height)),(0, 0, 255),2)
-
     cv2.imshow("Frame", frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
