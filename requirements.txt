@@ -22,7 +22,7 @@ distro==1.8.0
 docutils==0.19
 filelock==3.18.0
 Flask==2.2.2
-fonttools==4.57.0
+fonttools==4.58.0
 fsspec==2025.3.2
 gpiozero==2.0.1
 html5lib==1.1
@@ -43,7 +43,7 @@ libevdev==0.5
 logilab-common==1.9.8
 lxml==4.9.2
 MarkupSafe==2.1.2
-matplotlib==3.10.1
+matplotlib==3.10.3
 mccabe==0.7.0
 meson==1.5.1
 more-itertools==8.10.0
@@ -101,7 +101,7 @@ rfc3987==1.3.8
 roman==3.3
 RPi.GPIO==0.7.1a4
 RTIMULib==7.2.1
-scipy==1.15.2
+scipy==1.15.3
 seaborn==0.13.2
 Send2Trash==1.8.1b0
 sense-hat==2.6.0
@@ -256,7 +256,7 @@ types-xxhash==3.0
 types-zxcvbn==4.4
 typing_extensions==4.13.2
 tzdata==2025.2
-ultralytics==8.3.128
+ultralytics==8.3.131
 ultralytics-thop==2.0.14
 uritemplate==4.1.1
 urllib3==1.26.12

@@ -103,8 +103,6 @@ def main():
     else:
         person_num = 1
 
-    y_line = 300
-    x_line = 350
 
     rect_container_limits = [250, 200, 450, 400] # x1, y1, x2, y2
 
