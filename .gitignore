@@ -1,4 +1,5 @@
 images_people_temp/*
+!images_people_temp/.gitkeep
 models/
 venv
 
